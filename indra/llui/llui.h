@@ -246,7 +246,7 @@ public:
 	void setPopupFuncs(const add_popup_t& add_popup, const remove_popup_t&, const clear_popups_t& );
 
 	LLRect	mDirtyRect;
-	BOOL		mDirty;
+	BOOL		mUIDirty;
 	void		dirtyRect(LLRect rect);
 
 	// Return the ISO639 language name ("en", "ko", etc.) for the viewer UI.

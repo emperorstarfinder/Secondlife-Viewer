@@ -224,6 +224,7 @@ private:
 
 //UI shader (declared here so llui_libtest will link properly)
 extern LLGLSLShader			gUIProgram;
+extern LLGLSLShader         gBlendOverProgram;
 //output vec4(color.rgb,color.a*tex0[tc0].a)
 extern LLGLSLShader			gSolidColorProgram;
 //Alpha mask shader (declared here so llappearance can access properly)

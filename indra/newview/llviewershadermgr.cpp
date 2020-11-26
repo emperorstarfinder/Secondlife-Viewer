@@ -91,6 +91,7 @@ LLGLSLShader	gClipProgram;
 LLGLSLShader	gDownsampleDepthProgram;
 LLGLSLShader	gDownsampleDepthRectProgram;
 LLGLSLShader	gAlphaMaskProgram;
+LLGLSLShader    gBlendOverProgram;
 LLGLSLShader	gBenchmarkProgram;
 
 
@@ -741,6 +742,7 @@ void LLViewerShaderMgr::unloadShaders()
 	gDownsampleDepthRectProgram.unload();
 	gBenchmarkProgram.unload();
 	gAlphaMaskProgram.unload();
+    gBlendOverProgram.unload();
 	gUIProgram.unload();
 	gPathfindingProgram.unload();
 	gPathfindingNoNormalsProgram.unload();
@@ -4068,6 +4070,16 @@ BOOL LLViewerShaderMgr::loadShadersInterface()
 		gAlphaMaskProgram.mShaderFiles.push_back(make_pair("interface/alphamaskF.glsl", GL_FRAGMENT_SHADER_ARB));
 		gAlphaMaskProgram.mShaderLevel = mShaderLevel[SHADER_INTERFACE];
 		success = gAlphaMaskProgram.createShader(NULL, NULL);
+	}
+
+	if (success)
+	{
+		gBlendOverProgram.mName = "Overlay Blend Shader";
+		gBlendOverProgram.mShaderFiles.clear();
+		gBlendOverProgram.mShaderFiles.push_back(make_pair("interface/blendOverV.glsl", GL_VERTEX_SHADER_ARB));
+		gBlendOverProgram.mShaderFiles.push_back(make_pair("interface/blendOverF.glsl", GL_FRAGMENT_SHADER_ARB));
+		gBlendOverProgram.mShaderLevel = mShaderLevel[SHADER_INTERFACE];
+		success = gBlendOverProgram.createShader(NULL, NULL);
 	}
 
 	if( !success )

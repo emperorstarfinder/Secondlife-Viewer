@@ -2673,18 +2673,15 @@ void LLViewerWindow::draw()
 	
 	LLUI::setLineWidth(1.f);
 
-	LLUI::setLineWidth(1.f);
 	// Reset any left-over transforms
 	gGL.matrixMode(LLRender::MM_MODELVIEW);
 	
 	gGL.loadIdentity();
 
-	//S32 screen_x, screen_y;
-
-	if (!gSavedSettings.getBOOL("RenderUIBuffer"))
-	{
-		LLUI::getInstance()->mDirtyRect = getWindowRectScaled();
-	}
+	//if (!gSavedSettings.getBOOL("RenderUIBuffer"))
+	//{
+	//	LLUI::getInstance()->mDirtyRect = getWindowRectScaled();
+	//}
 
 	// HACK for timecode debugging
 	if (gSavedSettings.getBOOL("DisplayTimecode"))

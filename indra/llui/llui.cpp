@@ -154,7 +154,7 @@ mAudioCallback(audio_callback),
 mDeferredAudioCallback(deferred_audio_callback),
 mWindow(NULL), // set later in startup
 mRootView(NULL),
-mDirty(FALSE),
+mUIDirty(FALSE),
 mHelpImpl(NULL)
 {
 	LLRender2D::initParamSingleton(image_provider);
@@ -205,10 +205,10 @@ void LLUI::setPopupFuncs(const add_popup_t& add_popup, const remove_popup_t& rem
 
 void LLUI::dirtyRect(LLRect rect)
 {
-	if (!mDirty)
+	if (!mUIDirty)
 	{
 		mDirtyRect = rect;
-		mDirty = TRUE;
+		mUIDirty = TRUE;
 	}
 	else
 	{

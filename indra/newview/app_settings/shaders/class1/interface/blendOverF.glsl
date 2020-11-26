@@ -1,9 +1,9 @@
 /** 
- * @file alphamaskF.glsl
+ * @file class1/interface/blendOverF.glsl
  *
- * $LicenseInfo:firstyear=2007&license=viewerlgpl$
+ * $LicenseInfo:firstyear=2020&license=viewerlgpl$
  * Second Life Viewer Source Code
- * Copyright (C) 2007, Linden Research, Inc.
+ * Copyright (C) 2020, Linden Research, Inc.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,27 +23,24 @@
  * $/LicenseInfo$
  */
 
+
 #ifdef DEFINE_GL_FRAGCOLOR
 out vec4 frag_color;
 #else
 #define frag_color gl_FragColor
 #endif
 
-uniform sampler2D diffuseMap;
-
-uniform float minimum_alpha;
+uniform sampler2D diffuseMap;       // Base map
+//uniform sampler2D altDiffuseMap;    // Overlay map, alpha-blended over base map
 
 VARYING vec2 vary_texcoord0;
-VARYING vec4 vertex_color;
 
 void main() 
 {
-	//vec4 col = vertex_color*texture2D(diffuseMap, vary_texcoord0.xy);
-	//if (col.a < minimum_alpha)
-	//{
-	//	discard;
-	//}
+    vec4 base_color = texture2D(diffuseMap, vary_texcoord0.xy);
+    frag_color = base_color.grba;
+    //vec4 overlay_color = texture2D(altDiffuseMap, vary_texcoord0.xy);
 
-	//frag_color = col;
-    frag_color = texture2D(diffuseMap, vary_texcoord0.xy);
+ //   frag_color.rgb = mix(base_color.rgb, overlay_color.rgb, overlay_color.a);
+ //   frag_color.a = max(base_color.a, overlay_color.a);
 }
