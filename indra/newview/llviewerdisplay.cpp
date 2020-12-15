@@ -1435,6 +1435,8 @@ void render_ui_3d()
 	stop_glerror();
 }
 
+void do_assert_glerror();
+
 void render_ui_2d()
 {
 	LLGLSUIDefault gls_ui;
@@ -1480,234 +1482,255 @@ void render_ui_2d()
 		stop_glerror();
 	}
 	
-    // Preserve current render target
-    //LLRenderTarget* bound_rt = LLRenderTarget::getCurrentBoundTarget();
-    //bound_rt->flush();
-    //bound_rt->bindTarget();
+#if 1
 
-    //gGL.flush();    // required ?
-
-    S32 width = gViewerWindow->getWindowWidthScaled();
-    S32 height = gViewerWindow->getWindowHeightScaled();
-
-    // Bind the blend shader, query for diffuse map location
-    gBlendOverProgram.bind();
-    S32 diff_loc = GL_TEXTURE0;
-    diff_loc = gBlendOverProgram.getUniformLocation(LLStaticHashedString("diffuseMap"));
-    glActiveTextureARB(diff_loc);
-
-    // Allocate a texture and copy the current back buffer to it
-    GLuint base_texture;
-    glGenTextures(1, &base_texture);
-    glBindTexture(GL_TEXTURE_2D, base_texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  // Needed?
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  // Needed?
-
-    // Copy backbuf to base_texture
-    glCopyTexSubImage2D(base_texture, 0, 0, 0, 0, 0, width, height);
-
-    // Create a full-screen quad with tex coords
-    GLfloat fsq_verts[] = {    // x, y, z, u, v
-                            0.5f,  0.5f,  0.0f, 1.0f, 1.0f,     // top right
-                            0.5f,  -0.5f, 0.0f, 1.0f, 0.0f,     // bottom right
-                            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,     // bottom left
-                            -0.5f, 0.5f,  0.0f, 0.0f, 1.0f };   // top left
-
-    GLint fsq_idx[] = { 0, 1, 3,
-                        1, 2, 3 };
-
-    // Vtx array object to hold the full-screen quad setup
-    U32 vao, vbo, ebo;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    // Alloc and set up a vtx buffer within the vao
-    glGenBuffersARB(1, &vbo);
-    glBindBufferARB(GL_ARRAY_BUFFER, vbo);
-    glBufferDataARB(GL_ARRAY_BUFFER, sizeof(fsq_verts), fsq_verts, GL_STATIC_DRAW);
-
-    // set position and texcoord pointers
-    glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
-    glEnableVertexAttribArrayARB(0);
-    glVertexAttribPointerARB(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArrayARB(1);
-
-    // Generate index buffer
-    glGenBuffersARB(1, &ebo);
-    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, sizeof(fsq_idx), fsq_idx, GL_STATIC_DRAW);
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-#if 0
-    if (1)
+    /************************************************************/
+    /************************************************************/
+    /************************************************************/
+    /************************************************************/
+    if (0)
     {
-        gGL.flush();
+        S32 width = gViewerWindow->getWindowWidthScaled();
+        S32 height = gViewerWindow->getWindowHeightScaled();
 
+        // Bind the blend shader, query for diffuse map location
+        auto prev_shader = LLGLSLShader::sCurBoundShaderPtr;
+        gBlendOverProgram.bind();
+        S32 diff_loc = GL_TEXTURE0;
+        diff_loc = gBlendOverProgram.getUniformLocation(LLStaticHashedString("diffuseMap"));
+        glActiveTextureARB(diff_loc);
+
+        // Allocate a texture and copy the current back buffer to it
+        GLuint base_texture;
+        glGenTextures(1, &base_texture);    // 
+        glActiveTextureARB(GL_TEXTURE0);    // slot 0
+        glBindTexture(GL_TEXTURE_2D, base_texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  // Needed?
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  // Needed?
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);// Needed?
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);// Needed?
+
+        // Copy backbuf to base_texture
+        glCopyTexSubImage2D(base_texture, 0, 0, 0, 0, 0, width, height);
+
+        // Create a full-screen quad with tex coords
+        GLfloat fsq_verts[] = {    // x, y, z, u, v
+                                0.5f,  0.5f,  0.0f, 1.0f, 1.0f,     // top right
+                                0.5f,  -0.5f, 0.0f, 1.0f, 0.0f,     // bottom right
+                                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,     // bottom left
+                                -0.5f, 0.5f,  0.0f, 0.0f, 1.0f };   // top left
+
+        GLint fsq_idx[] = { 0, 1, 3,
+                            1, 2, 3 };
+
+        // Vtx array object to hold the full-screen quad setup
+        U32 vao, vbo, ebo;
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
+
+        // Alloc and set up a vtx buffer within the vao
+        glGenBuffersARB(1, &vbo);
+        glBindBufferARB(GL_ARRAY_BUFFER, vbo);
+        glBufferDataARB(GL_ARRAY_BUFFER, sizeof(fsq_verts), fsq_verts, GL_STATIC_DRAW);
+
+        // set position and texcoord pointers
+        glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+        glEnableVertexAttribArrayARB(0);
+        glVertexAttribPointerARB(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+        glEnableVertexAttribArrayARB(1);
+
+        // Generate index buffer
+        glGenBuffersARB(1, &ebo);
+        glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, sizeof(fsq_idx), fsq_idx, GL_STATIC_DRAW);
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        gBlendOverProgram.unbind();
+        prev_shader->bind();
+    }
+    else if (1)
+    {
+        //auto prev_shader = LLGLSLShader::sCurBoundShaderPtr;
         gBlendOverProgram.bind();
 
-        LLViewerTexture* basetex = bound_rt->
+        // Create & fill a vertex buffer
+        //      0
+        //    /   \
+        //   1-----2
+        GLfloat verts[] = {// x     y    z    u    v
+                           -1.0,  3.0, 0.0, 0.0, 2.0,
+                           -1.0, -1.0, 0.0, 0.0, 0.0,
+                            3.0, -1.0, 0.0, 2.0, 0.0
+        };
 
-        gBlendOverProgram.bindTexture("diffuseMap", (LLViewerTexture*)0);
+        static GLuint vbo = 0xdeadbeef;
+        if (0xdeadbeef == vbo)
+        {
+            glGenBuffersARB(1, &vbo);
+            glBindBufferARB(GL_ARRAY_BUFFER, vbo);
+            glBufferDataARB(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
+        } 
+        else 
+        {
+            glBindBufferARB(GL_ARRAY_BUFFER, vbo);
+        }
+        glEnableVertexAttribArrayARB(LLVertexBuffer::TYPE_VERTEX);
+        glVertexAttribPointerARB(LLVertexBuffer::TYPE_VERTEX, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);  // pos
+        glEnableVertexAttribArrayARB(LLVertexBuffer::TYPE_TEXCOORD0);
+        glVertexAttribPointerARB(LLVertexBuffer::TYPE_TEXCOORD0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)12);  // tex coord
 
-        // Bind mScreen color buffer as texture 0 (diffuse)
-        S32 channel = gBlendOverProgram.enableTexture(LLShaderMgr::DIFFUSE_MAP, gPipeline.mScreen.getUsage());
-        if (channel > -1)
+        // Allocate a texture and copy the current back buffer to it
+        S32 width = gViewerWindow->getWindowWidthScaled();
+        S32 height = gViewerWindow->getWindowHeightScaled();
+
+        static GLuint base_texture = 0xdeadbeef;
+        static GLuint overlay_texture = 0;
+        if (0xdeadbeef == base_texture)
         {
-            gPipeline.mScreen.bindTexture(0, channel, LLTexUnit::TFO_POINT);
+            // Set up base texture
+            glActiveTextureARB(GL_TEXTURE0);    // using tex slot 0
+            glGenTextures(1, &base_texture);    // 
+            glBindTexture(GL_TEXTURE_2D, base_texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  // Needed?
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  // Needed?
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);// Needed?
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);// Needed?
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+            // Set up overlay texture
+            unsigned char* image = (unsigned char*)malloc(4 * width * height);
+            for (int i = 0; i < width * height; i++)
+            {
+                if (0 == ((i % width) / 32) % 2)
+                {
+                    image[4 * i] = 0;
+                    image[4 * i + 1] = 0;
+                    image[4 * i + 2] = 0;
+                    image[4 * i + 3] = 0;
+                }
+                else
+                {
+                    image[4 * i] = 255;
+                    image[4 * i + 1] = 255;
+                    image[4 * i + 2] = 255;
+                    image[4 * i + 3] = 122;
+                }
+            }
+
+            glActiveTextureARB(GL_TEXTURE1);    // using tex slot1
+            glGenTextures(1, &overlay_texture);    // 
+            glBindTexture(GL_TEXTURE_2D, overlay_texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  // Needed?
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  // Needed?
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);// Needed?
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);// Needed?
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+            free(image);
+            do_assert_glerror();
         }
-        // Bind mUIScreen color buffer as texture 1 (alt_diffuse)
-        channel = gBlendOverProgram.enableTexture(LLShaderMgr::ALTERNATE_DIFFUSE_MAP, gPipeline.mUIScreen.getUsage());
-        if (channel > -1)
-        {
-            gPipeline.mUIScreen.bindTexture(1, channel, LLTexUnit::TFO_POINT);
-        }
+        
+        // Copy backbuf to base_texture
+        glActiveTextureARB(GL_TEXTURE0);    // base
+        glBindTexture(GL_TEXTURE_2D, base_texture);
+        glReadBuffer(GL_BACK);  // Copy from back buffer
+        do_assert_glerror();
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height);
+        do_assert_glerror();
+        gBlendOverProgram.uniform1i(LLStaticHashedString("diffuseMap"), 0);
+
+        // Set overlay (TBD - from UI renderer)
+        glActiveTextureARB(GL_TEXTURE1);    // overlay
+        glBindTexture(GL_TEXTURE_2D, overlay_texture);
+        do_assert_glerror();
+        gBlendOverProgram.uniform1i(LLStaticHashedString("altDiffuseMap"), 1);
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glBindBufferARB(GL_ARRAY_BUFFER, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glActiveTextureARB(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        gBlendOverProgram.unbind();
     }
-#endif
+    
+    //if (LLGLSLShader::sCurBoundShader == gUIProgram.mProgramObject)
+    gUIProgram.bind();
+    gViewerWindow->draw();
 
-    //gViewerWindow->draw();      // Draw the UI over RT
+    /************************************************************/
+    /************************************************************/
+    /************************************************************/
+    /************************************************************/
 
-    //LLPointer<LLViewerTexture> basetex = initial_rt->getTexture(LLRender::DIFFUSE_MAP);
-
-#if 0
-    if (0) // 
-    {
-        static LLRenderTarget* test_target = NULL;
-
-        S32 width = gViewerWindow->getWorldViewWidthRaw();
-        S32 height = gViewerWindow->getWorldViewHeightRaw();
-
-        if (!test_target)
-        {
-            // Create a new RGBA render tgt without Depth/Stencil, using FBO
-            test_target = new LLRenderTarget();
-            test_target->allocate(width, height, GL_RGBA, false, false, LLTexUnit::TT_TEXTURE, true);
-            gGL.getTexUnit(0)->bind(test_target);
-            gGL.getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_POINT);
-            gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
-        }
-
-        if (test_target->getWidth() != width || test_target->getHeight() != height) //size changed
-        {
-            test_target->resize(width, height);
-        }
-
-        test_target->bindTarget();
-        glClearColor(0.3, 0.3, 0.0, 0.5);   // Clear it to a distinct color
-        test_target->clear();
-        test_target->flush();
-
-        // Now restore previous bound RT
-        initial_rt->bindTarget();
-    }
-    // Switch to UI render target & draw UI
-	LLUI* ui_inst = LLUI::getInstance();
-
-	if (false)//gSavedSettings.getBOOL("RenderUIBuffer"))
+#else
+    LLGLSLShader::sCurBoundShader
+	if (gSavedSettings.getBOOL("RenderUIBuffer"))
 	{
-
-		//if (ui_inst->mUIDirty)
+		LLUI* ui_inst = LLUI::getInstance();
+		if (ui_inst->mUIDirty)
 		{
 			LLRect t_rect;
 
-			gPipeline.mUIScreen.bindTarget();   // Drawing to UI buffer
-			//gGL.setColorMask(true, true);       // Drawing color + alpha
+			gPipeline.mUIScreen.bindTarget();
+			gGL.setColorMask(true, true);
+			{
+				static const S32 pad = 8;
 
-            //static const S32 pad = 8;
+				ui_inst->mDirtyRect.mLeft -= pad;
+				ui_inst->mDirtyRect.mRight += pad;
+				ui_inst->mDirtyRect.mBottom -= pad;
+				ui_inst->mDirtyRect.mTop += pad;
 
-			//ui_inst->mDirtyRect.mLeft -= pad;
-			//ui_inst->mDirtyRect.mRight += pad;
-			//ui_inst->mDirtyRect.mBottom -= pad;
-			//ui_inst->mDirtyRect.mTop += pad;
+				static LLRect last_rect = ui_inst->mDirtyRect;
 
-			//static LLRect last_rect = ui_inst->mDirtyRect;
-
-			////union with last rect to avoid mouse poop
-			//last_rect.unionWith(ui_inst->mDirtyRect);
-			//				
-			//t_rect = ui_inst->mDirtyRect;
-			//ui_inst->mDirtyRect = last_rect;
-			//last_rect = t_rect;
+				//union with last rect to avoid mouse poop
+				last_rect.unionWith(ui_inst->mDirtyRect);
+								
+				t_rect = ui_inst->mDirtyRect;
+				ui_inst->mDirtyRect = last_rect;
+				last_rect = t_rect;
 			
-			//last_rect.mLeft = LLRect::tCoordType(last_rect.mLeft / ui_inst->getScaleFactor().mV[0]);
-			//last_rect.mRight = LLRect::tCoordType(last_rect.mRight / ui_inst->getScaleFactor().mV[0]);
-			//last_rect.mTop = LLRect::tCoordType(last_rect.mTop / ui_inst->getScaleFactor().mV[1]);
-			//last_rect.mBottom = LLRect::tCoordType(last_rect.mBottom / ui_inst->getScaleFactor().mV[1]);
+				last_rect.mLeft = LLRect::tCoordType(last_rect.mLeft / ui_inst->getScaleFactor().mV[0]);
+				last_rect.mRight = LLRect::tCoordType(last_rect.mRight / ui_inst->getScaleFactor().mV[0]);
+				last_rect.mTop = LLRect::tCoordType(last_rect.mTop / ui_inst->getScaleFactor().mV[1]);
+				last_rect.mBottom = LLRect::tCoordType(last_rect.mBottom / ui_inst->getScaleFactor().mV[1]);
 
-//            LLGLEnable scissor(GL_SCISSOR_TEST);
+                LLGLEnable scissor(GL_SCISSOR_TEST);
+                glClear(GL_COLOR_BUFFER_BIT);
 
-            glClearColor(0., 0.5, 0.1, 0.1);
-            gPipeline.mUIScreen.clear();
-            //glClear(GL_COLOR_BUFFER_BIT);
+				gViewerWindow->draw();
+			}
 
-            gViewerWindow->draw();  // Draw UI on UI RT
-			gPipeline.mUIScreen.flush();    // 
-
-            gGL.setColorMask(true, false);
+			gPipeline.mUIScreen.flush();
+			gGL.setColorMask(true, false);
             ui_inst->mUIDirty = FALSE;
 
 			ui_inst->mDirtyRect = t_rect;
-        }
+		}
 
-  //      gAlphaMaskProgram.bind();
-		//LLGLDisable cull(GL_CULL_FACE);
-		////LLGLDisable blend(GL_BLEND);
-  //      gGL.setSceneBlendType(LLRender::BT_ADD_WITH_ALPHA);
-  //      gPipeline.mUIScreen.bindTexture(0, 0, LLTexUnit::TFO_POINT);
-
-		//S32 width = gViewerWindow->getWindowWidthScaled();
-		//S32 height = gViewerWindow->getWindowHeightScaled();
-		////gGL.getTexUnit(0)->bind(&gPipeline.mUIScreen);
-		//gGL.begin(LLRender::TRIANGLE_STRIP);
-		////gGL.color4f(0.2,0.2,0.,0.);
-		//gGL.texCoord2f(0, 0);			gGL.vertex2i(0, 0);
-		//gGL.texCoord2f(width, 0);		gGL.vertex2i(width, 0);
-		//gGL.texCoord2f(0, height);		gGL.vertex2i(0, height);
-		//gGL.texCoord2f(width, height);	gGL.vertex2i(width, height);
-		//gGL.end();
-  //      gAlphaMaskProgram.unbind();
+        gUIProgram.bind();
+		LLGLDisable cull(GL_CULL_FACE);
+		LLGLDisable blend(GL_BLEND);
+		S32 width = gViewerWindow->getWindowWidthScaled();
+		S32 height = gViewerWindow->getWindowHeightScaled();
+		gGL.getTexUnit(0)->bind(&gPipeline.mUIScreen);
+		gGL.begin(LLRender::TRIANGLE_STRIP);
+		gGL.color4f(1,1,1,1);
+		gGL.texCoord2f(0, 0);			gGL.vertex2i(0, 0);
+		gGL.texCoord2f(width, 0);		gGL.vertex2i(width, 0);
+		gGL.texCoord2f(0, height);		gGL.vertex2i(0, height);
+		gGL.texCoord2f(width, height);	gGL.vertex2i(width, height);
+		gGL.end();
+        gUIProgram.unbind();
 	}
-	//else
+	else
 	{
-        // If we switched RTs, restore initial RT
-        LLRenderTarget* current_rt = LLRenderTarget::getCurrentBoundTarget();
-        if (current_rt != initial_rt) 
-            initial_rt->bindTarget();
-
-        ui_inst->mUIDirty = TRUE;   // Force UI dirty (exp)
-        gViewerWindow->draw();      // Draw the UI over RT
-
-        // EXP - blend the UI RT over LR corner
-        gBlendOverProgram.bind();
-
-        // DJH TODO what should these be?
-        LLPointer<LLViewerTexture> basetex, overlaytex;
-        
-        gBlendOverProgram.bindTexture(LLShaderMgr::DIFFUSE_MAP, basetex, LLTexUnit::TT_TEXTURE);
-        gBlendOverProgram.bindTexture(LLShaderMgr::ALTERNATE_DIFFUSE_MAP, overlaytex, LLTexUnit::TT_TEXTURE);
-
-        //LLGLDisable cull(GL_CULL_FACE);
-        //LLGLDisable blend(GL_BLEND);
-        gGL.setSceneBlendType(LLRender::BT_ADD_WITH_ALPHA);
-        gPipeline.mUIScreen.bindTexture(0, 0, LLTexUnit::TFO_POINT);
-
-        S32 width = gViewerWindow->getWindowWidthScaled();
-        S32 height = gViewerWindow->getWindowHeightScaled();
-        //gGL.getTexUnit(0)->bind(&gPipeline.mUIScreen);
-        gGL.begin(LLRender::TRIANGLE_STRIP);
-        //gGL.color4f(0.2,0.2,0.,0.);
-        gGL.texCoord2f(0, 0);			gGL.vertex2i(width/2, 0);
-        gGL.texCoord2f(width, 0);		gGL.vertex2i(width, 0);
-        gGL.texCoord2f(0, height);		gGL.vertex2i(width/2, height/2);
-        gGL.texCoord2f(width, height);	gGL.vertex2i(width, height/2);
-        gGL.end();
-        gAlphaMaskProgram.unbind();
-
-    }
+		gViewerWindow->draw();
+	}
 #endif
-
-
 	// reset current origin for font rendering, in case of tiling render
 	LLFontGL::sCurOrigin.set(0, 0);
 }

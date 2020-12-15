@@ -31,16 +31,14 @@ out vec4 frag_color;
 #endif
 
 uniform sampler2D diffuseMap;       // Base map
-//uniform sampler2D altDiffuseMap;    // Overlay map, alpha-blended over base map
+uniform sampler2D altDiffuseMap;    // Overlay map, alpha-blended over base map
 
-VARYING vec2 vary_texcoord0;
+VARYING vec2 v_texcoord0;
 
 void main() 
 {
-    vec4 base_color = texture2D(diffuseMap, vary_texcoord0.xy);
-    frag_color = base_color.grba;
-    //vec4 overlay_color = texture2D(altDiffuseMap, vary_texcoord0.xy);
-
- //   frag_color.rgb = mix(base_color.rgb, overlay_color.rgb, overlay_color.a);
- //   frag_color.a = max(base_color.a, overlay_color.a);
+    vec4 base_color = texture2D(diffuseMap, v_texcoord0);
+    vec4 overlay_color = texture2D(altDiffuseMap, v_texcoord0);
+    frag_color.rgb = mix(base_color.rgb, overlay_color.rgb, overlay_color.a);
+    frag_color.a = 1.0;
 }

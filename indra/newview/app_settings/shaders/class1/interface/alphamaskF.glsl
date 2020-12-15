@@ -38,12 +38,11 @@ VARYING vec4 vertex_color;
 
 void main() 
 {
-	//vec4 col = vertex_color*texture2D(diffuseMap, vary_texcoord0.xy);
-	//if (col.a < minimum_alpha)
-	//{
-	//	discard;
-	//}
+	vec4 col = vertex_color*texture2D(diffuseMap, vary_texcoord0.xy);
+	if (col.a < minimum_alpha)
+	{
+		discard;
+	}
 
-	//frag_color = col;
-    frag_color = texture2D(diffuseMap, vary_texcoord0.xy);
+	frag_color = col;
 }

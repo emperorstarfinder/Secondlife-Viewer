@@ -23,17 +23,14 @@
  * $/LicenseInfo$
  */
 
-uniform mat4 texture_matrix0;
-uniform mat4 modelview_projection_matrix;
-
-ATTRIBUTE vec3 position;
+ATTRIBUTE vec4 position;
 ATTRIBUTE vec2 texcoord0;
 
-VARYING vec2 vary_texcoord0;
+VARYING vec2 v_texcoord0;
 
 void main()
 {
-	gl_Position = modelview_projection_matrix * vec4(position, 1);
-	vary_texcoord0 =  (texture_matrix0 * vec4(texcoord0,0,1)).xy;
+    gl_Position = position;
+	v_texcoord0 = texcoord0;
 }
 
