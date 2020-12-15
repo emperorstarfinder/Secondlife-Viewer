@@ -928,6 +928,12 @@ BOOL LLGLSLShader::link(BOOL suppress_errors)
 
 void LLGLSLShader::bind()
 {
+    if (sCurBoundShader == mProgramObject)
+    {   // Warn if already bound
+        LL_WARNS("ShaderBinding") << "Attempt to re-bind currently bound shader program: " << mName << LL_ENDL;
+        return;
+    }
+
     gGL.flush();
     if (gGLManager.mHasShaderObjects)
     {
