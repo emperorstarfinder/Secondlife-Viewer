@@ -1525,11 +1525,14 @@ void render_ui_2d()
                             1, 2, 3 };
 
         // Vtx array object to hold the full-screen quad setup
-        U32 vao, vbo, ebo;
+#ifdef GL_ARB_vertex_array_object
+        U32 vao;
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
+#endif
 
         // Alloc and set up a vtx buffer within the vao
+        U32 vbo, ebo;
         glGenBuffersARB(1, &vbo);
         glBindBufferARB(GL_ARRAY_BUFFER, vbo);
         glBufferDataARB(GL_ARRAY_BUFFER, sizeof(fsq_verts), fsq_verts, GL_STATIC_DRAW);
