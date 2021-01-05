@@ -1440,6 +1440,7 @@ void do_assert_glerror();
 void render_ui_2d()
 {
 	LLGLSUIDefault gls_ui;
+    static LLTimer update_timer;
 
 	/////////////////////////////////////////////////////////////
 	//
@@ -1486,87 +1487,141 @@ void render_ui_2d()
 
     /************************************************************/
     /************************************************************/
-    /************************************************************/
-    /************************************************************/
-    if (0)
+
+    static GLuint base_texture = 0xdeadbeef;
+    static GLuint overlay_texture = 0xdeadbeef;
+
+    S32 window_width = gViewerWindow->getWindowWidthScaled();
+    S32 window_height = gViewerWindow->getWindowHeightScaled();
+
+    // Copy frame buffer to base_texture
+    // TBD: No copy, just draw the overlay image with alphablend
+    if (0xdeadbeef == base_texture)     // Also TBD, handle resize
     {
-        S32 width = gViewerWindow->getWindowWidthScaled();
-        S32 height = gViewerWindow->getWindowHeightScaled();
-
-        // Bind the blend shader, query for diffuse map location
-        auto prev_shader = LLGLSLShader::sCurBoundShaderPtr;
-        gBlendOverProgram.bind();
-        S32 diff_loc = GL_TEXTURE0;
-        diff_loc = gBlendOverProgram.getUniformLocation(LLStaticHashedString("diffuseMap"));
-        glActiveTextureARB(diff_loc);
-
-        // Allocate a texture and copy the current back buffer to it
-        GLuint base_texture;
+        // Set up base texture
+        glActiveTextureARB(GL_TEXTURE0);    // using tex slot 0
         glGenTextures(1, &base_texture);    // 
-        glActiveTextureARB(GL_TEXTURE0);    // slot 0
         glBindTexture(GL_TEXTURE_2D, base_texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  // Needed?
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  // Needed?
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);// Needed?
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);// Needed?
-
-        // Copy backbuf to base_texture
-        glCopyTexSubImage2D(base_texture, 0, 0, 0, 0, 0, width, height);
-
-        // Create a full-screen quad with tex coords
-        GLfloat fsq_verts[] = {    // x, y, z, u, v
-                                0.5f,  0.5f,  0.0f, 1.0f, 1.0f,     // top right
-                                0.5f,  -0.5f, 0.0f, 1.0f, 0.0f,     // bottom right
-                                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,     // bottom left
-                                -0.5f, 0.5f,  0.0f, 0.0f, 1.0f };   // top left
-
-        GLint fsq_idx[] = { 0, 1, 3,
-                            1, 2, 3 };
-
-        // Vtx array object to hold the full-screen quad setup
-#ifdef GL_ARB_vertex_array_object
-        U32 vao;
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
-#endif
-
-        // Alloc and set up a vtx buffer within the vao
-        U32 vbo, ebo;
-        glGenBuffersARB(1, &vbo);
-        glBindBufferARB(GL_ARRAY_BUFFER, vbo);
-        glBufferDataARB(GL_ARRAY_BUFFER, sizeof(fsq_verts), fsq_verts, GL_STATIC_DRAW);
-
-        // set position and texcoord pointers
-        glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
-        glEnableVertexAttribArrayARB(0);
-        glVertexAttribPointerARB(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-        glEnableVertexAttribArrayARB(1);
-
-        // Generate index buffer
-        glGenBuffersARB(1, &ebo);
-        glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, sizeof(fsq_idx), fsq_idx, GL_STATIC_DRAW);
-
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-        gBlendOverProgram.unbind();
-        prev_shader->bind();
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        do_assert_glerror();    // TBD stop_glerror
     }
-    else if (1)
+
+    // Copy backbuf to base_texture
+    glActiveTextureARB(GL_TEXTURE0);    // base
+    glBindTexture(GL_TEXTURE_2D, base_texture);
+    glReadBuffer(GL_BACK);  // Copy from back buffer
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, window_width, window_height);
+    do_assert_glerror();    // TBD stop_glerror
+
+    /************************************************************/
+    /************************************************************/
+
+
+    // Update menu overlay image, if needed
+    LLUI* ui_inst = LLUI::getInstance();
+
+    static int update_frames = 0, all_frames = 0;
+    
+    all_frames++;
+
+    // Re-draw if UI dirty, or min update time 
+    //if (ui_inst->mUIDirty || ui_inst->mUpdateTimer.checkExpirationAndReset(0.333f))
+    if (ui_inst->mUpdateTimer.checkExpirationAndReset(0.2f))
+    {
+        //ui_inst->mUIDirty = FALSE;
+        update_frames++;
+
+        // Switch to UI FBO, draw the UI to it
+        //auto current_target = LLRenderTarget::getCurrentBoundTarget();  // better be none!
+        //current_target->getHeight();
+
+        //LLRenderTarget* ui_rt = &(gPipeline.mUIScreen);
+
+        //if (0 == ui_rt->getNumTextures())
+        //{
+        //    ui_rt->addColorAttachment(GL_RGBA8);
+        //}
+
+
+        //ui_rt->bindTarget();   // Bound for write + read
+        //ui_rt->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        //if (LLGLSLShader::sCurBoundShader == gUIProgram.mProgramObject)
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        gUIProgram.bind();
+        gViewerWindow->draw();
+
+        // Copy the UI image to overlay_texture
+        if (0xdeadbeef == overlay_texture)
+        {
+            glActiveTextureARB(GL_TEXTURE0);    // using tex slot1
+            glGenTextures(1, &overlay_texture);    // 
+            glBindTexture(GL_TEXTURE_2D, overlay_texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  // Needed?
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  // Needed?
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);// Needed?
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);// Needed?
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+            do_assert_glerror();
+        }
+
+        glActiveTextureARB(GL_TEXTURE0);    // base
+        glBindTexture(GL_TEXTURE_2D, overlay_texture);
+        glReadBuffer(GL_BACK);  // Copy from back buffer
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, window_width, window_height);
+        do_assert_glerror();    // TBD stop_glerror
+
+        //// Copy backbuf to overlay_texture
+        //glActiveTextureARB(GL_TEXTURE0);
+        //do_assert_glerror();    // TBD stop_glerror
+        //glBindTexture(GL_TEXTURE_2D, overlay_texture);
+        //do_assert_glerror();    // TBD stop_glerror
+
+        //glReadBuffer(GL_BACK);
+        //do_assert_glerror();    // TBD stop_glerror
+        //
+        ////GLsizei w = ui_rt->getWidth();
+        ////GLsizei h = ui_rt->getHeight();
+
+        ////auto tex = ui_rt->getTexture();
+
+        //glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, window_width, window_height);
+        //do_assert_glerror();    // TBD stop_glerror
+
+        // clean up
+        gUIProgram.unbind();
+        //ui_rt->flush();    // Re-binds the previous framebuffer. TBD refactor to make this clear.
+    }
+
+    /************************************************************/
+    /************************************************************/
+    // Full-screen blend of base with overlay
+    if (1)
     {
         //auto prev_shader = LLGLSLShader::sCurBoundShaderPtr;
         gBlendOverProgram.bind();
 
-        // Create & fill a vertex buffer
-        //      0
-        //    /   \
-        //   1-----2
+        // Create & fill a vertex buffer with 1 full-screen tri
+        //   0
+        //   | \
+        //   1---2
         GLfloat verts[] = {// x     y    z    u    v
                            -1.0,  3.0, 0.0, 0.0, 2.0,
                            -1.0, -1.0, 0.0, 0.0, 0.0,
                             3.0, -1.0, 0.0, 2.0, 0.0
         };
+
+//        // Vtx array object to hold the full-screen buffer/layout
+//#ifdef GL_ARB_vertex_array_object
+//        U32 vao;
+//        glGenVertexArrays(1, &vao);
+//        glBindVertexArray(vao);
+//#endif
 
         static GLuint vbo = 0xdeadbeef;
         if (0xdeadbeef == vbo)
@@ -1584,71 +1639,16 @@ void render_ui_2d()
         glEnableVertexAttribArrayARB(LLVertexBuffer::TYPE_TEXCOORD0);
         glVertexAttribPointerARB(LLVertexBuffer::TYPE_TEXCOORD0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)12);  // tex coord
 
-        // Allocate a texture and copy the current back buffer to it
-        S32 width = gViewerWindow->getWindowWidthScaled();
-        S32 height = gViewerWindow->getWindowHeightScaled();
-
-        static GLuint base_texture = 0xdeadbeef;
-        static GLuint overlay_texture = 0;
-        if (0xdeadbeef == base_texture)
-        {
-            // Set up base texture
-            glActiveTextureARB(GL_TEXTURE0);    // using tex slot 0
-            glGenTextures(1, &base_texture);    // 
-            glBindTexture(GL_TEXTURE_2D, base_texture);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  // Needed?
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  // Needed?
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);// Needed?
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);// Needed?
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-            // Set up overlay texture
-            unsigned char* image = (unsigned char*)malloc(4 * width * height);
-            for (int i = 0; i < width * height; i++)
-            {
-                if (0 == ((i % width) / 32) % 2)
-                {
-                    image[4 * i] = 0;
-                    image[4 * i + 1] = 0;
-                    image[4 * i + 2] = 0;
-                    image[4 * i + 3] = 0;
-                }
-                else
-                {
-                    image[4 * i] = 255;
-                    image[4 * i + 1] = 255;
-                    image[4 * i + 2] = 255;
-                    image[4 * i + 3] = 122;
-                }
-            }
-
-            glActiveTextureARB(GL_TEXTURE1);    // using tex slot1
-            glGenTextures(1, &overlay_texture);    // 
-            glBindTexture(GL_TEXTURE_2D, overlay_texture);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  // Needed?
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  // Needed?
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);// Needed?
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);// Needed?
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-            free(image);
-            do_assert_glerror();
-        }
-        
-        // Copy backbuf to base_texture
         glActiveTextureARB(GL_TEXTURE0);    // base
         glBindTexture(GL_TEXTURE_2D, base_texture);
-        glReadBuffer(GL_BACK);  // Copy from back buffer
-        do_assert_glerror();
-        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height);
-        do_assert_glerror();
         gBlendOverProgram.uniform1i(LLStaticHashedString("diffuseMap"), 0);
 
-        // Set overlay (TBD - from UI renderer)
         glActiveTextureARB(GL_TEXTURE1);    // overlay
         glBindTexture(GL_TEXTURE_2D, overlay_texture);
         do_assert_glerror();
         gBlendOverProgram.uniform1i(LLStaticHashedString("altDiffuseMap"), 1);
 
+        glClear(GL_COLOR_BUFFER_BIT);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glBindBufferARB(GL_ARRAY_BUFFER, 0);
@@ -1659,9 +1659,7 @@ void render_ui_2d()
         gBlendOverProgram.unbind();
     }
     
-    //if (LLGLSLShader::sCurBoundShader == gUIProgram.mProgramObject)
-    gUIProgram.bind();
-    gViewerWindow->draw();
+
 
     /************************************************************/
     /************************************************************/

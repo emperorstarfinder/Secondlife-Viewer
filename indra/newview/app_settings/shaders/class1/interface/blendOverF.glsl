@@ -38,7 +38,17 @@ VARYING vec2 v_texcoord0;
 void main() 
 {
     vec4 base_color = texture2D(diffuseMap, v_texcoord0);
+    
+    // greyscale 3D
+    //float invert = (base_color.r + base_color.g + base_color.b) / 3.0f;
+    //base_color = vec4(invert, invert, invert, 1.0f);
+    
     vec4 overlay_color = texture2D(altDiffuseMap, v_texcoord0);
-    frag_color.rgb = mix(base_color.rgb, overlay_color.rgb, overlay_color.a);
+    float blend_amount = overlay_color.a;
+    
+    // blue overlay
+    //overlay_color.b = 1.0f;
+    
+    frag_color = mix(base_color, overlay_color, blend_amount);
     frag_color.a = 1.0;
 }

@@ -272,6 +272,7 @@ U64MicrosecondsImplicit totalTime()
 ///////////////////////////////////////////////////////////////////////////////
 
 LLTimer::LLTimer()
+    : mExpirationTicks(0)
 {
 	if (!get_timer_info().mClockFrequency)
 	{

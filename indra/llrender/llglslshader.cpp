@@ -930,7 +930,7 @@ void LLGLSLShader::bind()
 {
     if (sCurBoundShader == mProgramObject)
     {   // Warn if already bound
-        LL_WARNS("ShaderBinding") << "Attempt to re-bind currently bound shader program: " << mName << LL_ENDL;
+        LL_WARNS_ONCE("ShaderBinding") << "Attempt to re-bind currently bound shader program: " << mName << LL_ENDL;
         return;
     }
 
