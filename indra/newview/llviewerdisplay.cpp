@@ -1529,26 +1529,30 @@ void render_ui_2d()
     all_frames++;
 
     // Re-draw if UI dirty, or min update time 
-    //if (ui_inst->mUIDirty || ui_inst->mUpdateTimer.checkExpirationAndReset(0.333f))
-    if (ui_inst->mUpdateTimer.checkExpirationAndReset(0.2f))
+    if (ui_inst->mUIDirty || ui_inst->mUpdateTimer.checkExpirationAndReset(0.333f))
+    //if (ui_inst->mUpdateTimer.checkExpirationAndReset(0.2f))
     {
         //ui_inst->mUIDirty = FALSE;
         update_frames++;
 
+#define DJH_WIP 1
+#ifdef DJH_WIP // ////////////////////////////////////////////////////////////////////////////////////////
         // Switch to UI FBO, draw the UI to it
-        //auto current_target = LLRenderTarget::getCurrentBoundTarget();  // better be none!
-        //current_target->getHeight();
+        auto current_target = LLRenderTarget::getCurrentBoundTarget();  // better be none!
+        auto cur_h = current_target->getHeight();
 
-        //LLRenderTarget* ui_rt = &(gPipeline.mUIScreen);
+        LLRenderTarget* ui_rt = &(gPipeline.mUIScreen);
+        auto ui_h = ui_rt->getHeight();
+        llassert(cur_h == ui_h);
 
-        //if (0 == ui_rt->getNumTextures())
-        //{
-        //    ui_rt->addColorAttachment(GL_RGBA8);
-        //}
+        if (0 == ui_rt->getNumTextures())
+        {
+            ui_rt->addColorAttachment(GL_RGBA8);
+        }
 
-
-        //ui_rt->bindTarget();   // Bound for write + read
-        //ui_rt->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        ui_rt->bindTarget();   // Bound for write + read
+        ui_rt->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+#endif // DJH_WIP ////////////////////////////////////////////////////////////////////////////////////////
 
         //if (LLGLSLShader::sCurBoundShader == gUIProgram.mProgramObject)
         glClearColor(0, 0, 0, 0);
@@ -1595,7 +1599,9 @@ void render_ui_2d()
 
         // clean up
         gUIProgram.unbind();
-        //ui_rt->flush();    // Re-binds the previous framebuffer. TBD refactor to make this clear.
+#ifdef DJH_WIP // ////////////////////////////////////////////////////////////////////////////////////////
+        ui_rt->flush();    // Re-binds the previous framebuffer. TBD refactor to make this clear.
+#endif // DJH_WIP // ////////////////////////////////////////////////////////////////////////////////////////
     }
 
     /************************************************************/

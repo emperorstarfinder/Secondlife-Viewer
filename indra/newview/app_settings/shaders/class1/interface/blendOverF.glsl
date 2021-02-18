@@ -44,7 +44,7 @@ void main()
     //base_color = vec4(invert, invert, invert, 1.0f);
     
     vec4 overlay_color = texture2D(altDiffuseMap, v_texcoord0);
-    float blend_amount = overlay_color.a;
+    float blend_amount = min(10.0 * overlay_color.a, 1.0);    // Boost the alpha, for a more-opaque UI
     
     // blue overlay
     //overlay_color.b = 1.0f;
