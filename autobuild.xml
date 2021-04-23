@@ -3067,6 +3067,58 @@ Copyright (c) 2012, 2014, 2015, 2016 nghttp2 contributors</string>
         <key>version</key>
         <string>4.10.0000.32327.5fc3fe7c.539691</string>
       </map>
+      <key>threejs</key>
+      <map>
+        <key>copyright</key>
+        <string>Copyright © 2010-2018 three.js authors</string>
+        <key>license</key>
+        <string>MIT</string>
+        <key>license_file</key>
+        <string>LICENSES/THREEJS_LICENSE.txt</string>
+        <key>name</key>
+        <string>threejs</string>
+        <key>platforms</key>
+        <map>
+          <key>darwin64</key>
+          <map>
+            <key>archive</key>
+            <map>
+              <key>hash</key>
+              <string>673a13de47ed4876442953839f1b0291</string>
+              <key>url</key>
+              <string>http://automated-builds-secondlife-com.s3.amazonaws.com/ct2/13718/85284/threejs-0.90.0-darwin64-512660.tar.bz2</string>
+            </map>
+            <key>name</key>
+            <string>darwin64</string>
+          </map>
+          <key>windows</key>
+          <map>
+            <key>archive</key>
+            <map>
+              <key>hash</key>
+              <string>e893ef79f952950f5c45dee9a3ef8694</string>
+              <key>url</key>
+              <string>http://automated-builds-secondlife-com.s3.amazonaws.com/ct2/13721/85298/threejs-0.90.0-windows-512660.tar.bz2</string>
+            </map>
+            <key>name</key>
+            <string>windows</string>
+          </map>
+          <key>windows64</key>
+          <map>
+            <key>archive</key>
+            <map>
+              <key>hash</key>
+              <string>eb74d806e35db748c71f421ade447cc7</string>
+              <key>url</key>
+              <string>http://automated-builds-secondlife-com.s3.amazonaws.com/ct2/13720/85292/threejs-0.90.0-windows64-512660.tar.bz2</string>
+            </map>
+            <key>name</key>
+            <string>windows64</string>
+          </map>
+        </map>
+        <key>version</key>
+        <string>0.90.0</string>
+      </map>
       <key>tut</key>
       <map>
         <key>copyright</key>

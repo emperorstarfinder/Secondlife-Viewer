@@ -207,6 +207,7 @@ set(viewer_SOURCE_FILES
     llfilteredwearablelist.cpp
     llfirstuse.cpp
     llflexibleobject.cpp
+    llfloater360capture.cpp
     llfloaterabout.cpp
     llfloaterbvhpreview.cpp
     llfloaterauction.cpp
@@ -840,6 +841,7 @@ set(viewer_HEADER_FILES
     llfilteredwearablelist.h
     llfirstuse.h
     llflexibleobject.h
+    llfloater360capture.h
     llfloaterabout.h
     llfloaterbvhpreview.h
     llfloaterauction.h

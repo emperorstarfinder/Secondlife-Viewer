@@ -33,6 +33,7 @@
 #include "llcommandhandler.h"
 #include "llcompilequeue.h"
 #include "llfasttimerview.h"
+#include "llfloater360capture.h"
 #include "llfloaterabout.h"
 #include "llfloaterauction.h"
 #include "llfloaterautoreplacesettings.h"
@@ -192,6 +193,7 @@ void LLViewerFloaterReg::registerFloaters()
 	// *NOTE: Please keep these alphabetized for easier merges
 
 	LLFloaterAboutUtil::registerFloater();
+	LLFloaterReg::add("360capture", "floater_360capture.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloater360Capture>);
 	LLFloaterReg::add("block_timers", "floater_fast_timers.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFastTimerView>);
 	LLFloaterReg::add("about_land", "floater_about_land.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterLand>);
 	LLFloaterReg::add("appearance", "floater_my_appearance.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterSidePanelContainer>);

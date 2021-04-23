@@ -517,6 +517,14 @@
              function="Floater.Show"
              parameter="snapshot" />
         </menu_item_call>
+        <menu_item_call
+         label="Capture 360"
+         name="Capture 360"
+         shortcut="control|shift|c">
+            <menu_item_call.on_click
+             function="Floater.Show"
+             parameter="360capture" />
+        </menu_item_call>
         <menu_item_separator/>
         <menu_item_call
          label="Place profile"

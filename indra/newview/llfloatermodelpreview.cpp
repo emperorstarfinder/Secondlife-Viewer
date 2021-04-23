@@ -787,7 +787,7 @@ void LLFloaterModelPreview::draw()
 			childSetTextArg("status", "[STATUS]", getString("status_parse_error"));
 			toggleCalculateButton(false);
 		}
-        else
+		else
         if (mModelPreview->getLoadState() == LLModelLoader::WARNING_BIND_SHAPE_ORIENTATION)
         {
 			childSetTextArg("status", "[STATUS]", getString("status_bind_shape_orientation"));

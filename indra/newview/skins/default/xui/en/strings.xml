@@ -217,6 +217,14 @@ Please try logging in again in a minute.</string>
     <string name="Miniature">Miniature</string>
     <string name="Toycamera">Toy Camera</string>
 	
+    <!-- 360 Capture messages -->
+	<string name="360CaptureReadyToCapture">Ready! Press the Capture 360 button to begin.</string><!-- system is ready to take a 360 capture -->
+	<string name="360CaptureCapturing360Images">Capturing images.</string><!-- system is capturing 360 images -->
+	<string name="360CaptureCaptured360Images">Captured images - building 360 panorama.</string><!-- system has captured 360 images -->
+	<string name="360CaptureComplete">Finished.</string><!-- system has finished capturing images and creating 360 EQR image -->
+	<string name="360CaptureSaving360Output">Saving 360 output image.</string><!-- system is saving the single 360 EQR output image-->
+	<string name="360CaptureSendingPlacePages">Sending image to Place Pages.</string><!-- system is sending the 360 EQR image to Place Pages-->
+	 
     <!-- Tooltip -->
 	<string name="TooltipPerson">Person</string><!-- Object under mouse pointer is an avatar -->
 	<string name="TooltipNoName">(no name)</string> <!-- No name on an object -->

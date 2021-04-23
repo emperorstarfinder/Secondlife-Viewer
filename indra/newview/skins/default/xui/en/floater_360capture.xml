@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater
+ can_resize="true"
+ height="600"
+ layout="topleft"
+ min_height="350"
+ min_width="350"
+ name="360capture"
+ help_topic="360capture"
+ save_rect="true"
+ title="360 CAPTURE"
+ width="600">
+  <panel
+   layout="topleft"
+    background_visible="true"
+    top="552"
+    follows="left|bottom|right"
+    left="4"
+    width="592"
+    bg_opaque_color="0.195 0.195 0.195 1"
+    background_opaque="true"
+    height="20"
+    name="status_bar_panel">
+    <text
+     follows="left|bottom|left"
+     font="SansSerif"
+     halign="left"
+     valign="center"
+     height="20"
+     align="center"
+     left="10"
+     name="status_bar_text"
+     text_color="1 1 0.7"
+     top="0"
+     value=""
+     width="592"/>
+  </panel>
+  <web_browser
+   top="0"
+   follows="all"
+   layout="topleft"
+   left=""
+   width="592"
+   height="550"
+   name="360capture_contents"
+   trusted_content="true"/>
+  <button
+  follows="bottom|left"
+  height="20"
+  label="Capture 360"
+  layout="bottomleft"
+  left="4"
+  name="capture_button"
+  bottom="4"
+  width="100"/>
+  <button
+  follows="bottom|left"
+  height="20"
+  label="Save Local"
+  layout="bottomleft"
+  left="112"
+  name="save_local_button"
+  bottom="4"
+  width="100"/>
+  <button
+  follows="bottom|right"
+  height="20"
+  label="Close"
+  left="492"
+  layout="bottomleft"
+  name="close_button"
+  bottom="4"
+  width="100"/>
+</floater>
