@@ -367,6 +367,58 @@
         <key>version</key>
         <string>2.3.545362</string>
       </map>
+      <key>cubemaptoequirectangular</key>
+      <map>
+        <key>copyright</key>
+        <string>Copyright (c) 2017 Jaume Sanchez Elias, http://www.clicktorelease.com</string>
+        <key>license</key>
+        <string>MIT</string>
+        <key>license_file</key>
+        <string>LICENSES/CUBEMAPTOEQUIRECTANGULAR_LICENSE.txt</string>
+        <key>name</key>
+        <string>cubemaptoequirectangular</string>
+        <key>platforms</key>
+        <map>
+          <key>darwin64</key>
+          <map>
+            <key>archive</key>
+            <map>
+              <key>hash</key>
+              <string>ec17b1e2e6c260ba1ed0225027c81db1</string>
+              <key>url</key>
+              <string>http://automated-builds-secondlife-com.s3.amazonaws.com/ct2/13736/85526/cubemaptoequirectangular-0.0.0-darwin64-512671.tar.bz2</string>
+            </map>
+            <key>name</key>
+            <string>darwin64</string>
+          </map>
+          <key>windows</key>
+          <map>
+            <key>archive</key>
+            <map>
+              <key>hash</key>
+              <string>824a50d5f839c403a402617b6b86b2a9</string>
+              <key>url</key>
+              <string>http://automated-builds-secondlife-com.s3.amazonaws.com/ct2/13738/85538/cubemaptoequirectangular-0.0.0-windows-512671.tar.bz2</string>
+            </map>
+            <key>name</key>
+            <string>windows</string>
+          </map>
+          <key>windows64</key>
+          <map>
+            <key>archive</key>
+            <map>
+              <key>hash</key>
+              <string>7014caaf08328b1988e7d4a53bcdf74e</string>
+              <key>url</key>
+              <string>http://automated-builds-secondlife-com.s3.amazonaws.com/ct2/13737/85533/cubemaptoequirectangular-0.0.0-windows64-512671.tar.bz2</string>
+            </map>
+            <key>name</key>
+            <string>windows64</string>
+          </map>
+        </map>
+        <key>version</key>
+        <string>0.0.0</string>
+      </map>
       <key>curl</key>
       <map>
         <key>copyright</key>
@@ -1490,6 +1542,58 @@
         </map>
         <key>version</key>
         <string>2012.1-2</string>
+      </map>
+      <key>jpegencoderbasic</key>
+      <map>
+        <key>copyright</key>
+        <string>Andreas Ritter, www.bytestrom.eu, 11/2009</string>
+        <key>license</key>
+        <string>NONE</string>
+        <key>license_file</key>
+        <string>LICENSES/JPEG_ENCODER_BASIC_LICENSE.txt</string>
+        <key>name</key>
+        <string>jpegencoderbasic</string>
+        <key>platforms</key>
+        <map>
+          <key>darwin64</key>
+          <map>
+            <key>archive</key>
+            <map>
+              <key>hash</key>
+              <string>8dc3d7cda4e387759163d09c706513e5</string>
+              <key>url</key>
+              <string>http://automated-builds-secondlife-com.s3.amazonaws.com/ct2/13702/85232/jpegencoderbasic-0.0.0-darwin64-512651.tar.bz2</string>
+            </map>
+            <key>name</key>
+            <string>darwin64</string>
+          </map>
+          <key>windows</key>
+          <map>
+            <key>archive</key>
+            <map>
+              <key>hash</key>
+              <string>447b31d2515d7f5c57f77d13d0504fdf</string>
+              <key>url</key>
+              <string>http://automated-builds-secondlife-com.s3.amazonaws.com/ct2/13704/85243/jpegencoderbasic-0.0.0-windows-512651.tar.bz2</string>
+            </map>
+            <key>name</key>
+            <string>windows</string>
+          </map>
+          <key>windows64</key>
+          <map>
+            <key>archive</key>
+            <map>
+              <key>hash</key>
+              <string>2943df240955138e5ab52bddcddd4fe1</string>
+              <key>url</key>
+              <string>http://automated-builds-secondlife-com.s3.amazonaws.com/ct2/13703/85240/jpegencoderbasic-0.0.0-windows64-512651.tar.bz2</string>
+            </map>
+            <key>name</key>
+            <string>windows64</string>
+          </map>
+        </map>
+        <key>version</key>
+        <string>0.0.0</string>
       </map>
       <key>jpeglib</key>
       <map>

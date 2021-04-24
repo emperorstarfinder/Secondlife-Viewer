@@ -87,7 +87,7 @@ BOOL LLFloater360Capture::postBuild()
 
 	mStatusBarText = getChild<LLTextBox>("status_bar_text");
 
-	// store the size (width and height) of the 6 source images ussed to generate
+	// store the size (width and height) of the 6 source images used to generate
 	// the equirectangular image in settings for now.  We might expose via
 	// the UI eventually
 	mSourceImageSize = gSavedSettings.getU32("360SnapShotSourceImageSize");
@@ -98,7 +98,7 @@ BOOL LLFloater360Capture::postBuild()
 	S32 window_height = window_rect.getHeight();
 
 	// Need to limit source image size to smallest dim of window due to non-ALM rendering
-	// using the default framebuffer to avoid fitting problems
+	// using the default frame buffer to avoid fitting problems
 	if (!LLPipeline::sRenderDeferred)
 	{
 		while (mSourceImageSize > window_width || mSourceImageSize > window_height)
@@ -108,8 +108,8 @@ BOOL LLFloater360Capture::postBuild()
 		llassert(mSourceImageSize > 0);
 	}
 
-	// the size of the output equirectanguilar image.  The width is always 2x
-	// the height.  TODO: Need to propogate trhis through to JavaScript EQR code
+	// the size of the output equirectangular image.  The width is always 2x
+	// the height.  TODO: Need to propagate this through to JavaScript EQR code
 	mOutputImageWidth = gSavedSettings.getU32("360SnapShotOutputImageWidth");
 	mOutputImageHeight = gSavedSettings.getU32("360SnapShotOutputImageHeight");
 
@@ -120,14 +120,15 @@ BOOL LLFloater360Capture::postBuild()
 	// enable resizing and enable for width and for height
 	enableResizeCtrls(true, true, true);
 
-	// initial heading that consumers of the eqr image like Facebook use
-	// to position initial view - we set during capture
+	// initial heading that consumers of the equirectangular image
+	// (such as Facebook or Flickr) use to position initial view - 
+	// we set during capture
 	mInitialHeadingDeg = 0.0;
 
-	// inital contents of status bar
+	// initial contents of status bar
 	setStatusText("360CaptureReadyToCapture");
 
-	// save directory in which to store the images (must obiovusly be writable by the viewer)
+	// save directory in which to store the images (must obliviously be writable by the viewer)
 	// Also create it for users who haven't used the 360 feature before.
 	mImageSaveDir = gDirUtilp->getLindenUserDir() + gDirUtilp->getDirDelimiter() + "eqrimg";
 	LLFile::mkdir(mImageSaveDir);
@@ -189,7 +190,7 @@ static const std::string filenames[6] =
 
 void LLFloater360Capture::capture360Images()
 {
-	// disable buttons while we are captuing
+	// disable buttons while we are capturing
 	mCaptureBtn->setEnabled(false);
 	mSaveLocalBtn->setEnabled(false);
 
@@ -306,7 +307,7 @@ void LLFloater360Capture::handleMediaEvent(LLPluginClassMedia* self, EMediaEvent
 	case MEDIA_EVENT_NAVIGATE_COMPLETE:
 	{
 		std::string navigate_url = self->getNavigateURI();
-		// evern though this is the only page we visit in this floater, play it safe
+		// even though this is the only page we visit in this floater, play it safe
 		// and compare the URL we navigated to with the page we care about
 		if (navigate_url.find(mDisplayEqrImageHTML) != std::string::npos)
 		{
@@ -318,7 +319,7 @@ void LLFloater360Capture::handleMediaEvent(LLPluginClassMedia* self, EMediaEvent
 			std::replace(mImageSaveDir.begin(), mImageSaveDir.end(), '\\', '/');
 
 			// so now our page is loaded and images are in place - call the JS init script
-			// with some params to render the cubemap comprising of the images
+			// with some params to render the cube map comprising of the images
 			std::ostringstream cmd;
 			cmd << "init(";
 			cmd << mOutputImageWidth;
@@ -377,7 +378,7 @@ void LLFloater360Capture::onSaveLocalBtn()
 	// build the JavaScript command to send to the web browser
 	const std::string cmd = "saveAsEqrImage(\"" + suggested_filename + "\", \"" + xmp + "\")";
 
-	// send it to the browser instance, triggering the eqr capture
+	// send it to the browser instance, triggering the equirectangular capture
 	mWebBrowser->getMediaPlugin()->executeJavaScript(cmd);
 
 	// clear stats text
