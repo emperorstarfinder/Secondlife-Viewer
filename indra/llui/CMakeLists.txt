@@ -24,6 +24,7 @@ include_directories(
     ${LLMATH_INCLUDE_DIRS}
     ${LLMESSAGE_INCLUDE_DIRS}
     ${LLRENDER_INCLUDE_DIRS}
+    ${TRACY_INCLUDE_DIRS}
     ${LLWINDOW_INCLUDE_DIRS}
     ${LLVFS_INCLUDE_DIRS}
     ${LLXML_INCLUDE_DIRS}
@@ -280,6 +281,7 @@ add_library (llui ${llui_SOURCE_FILES})
 # Sort by high-level to low-level
 target_link_libraries(llui
     ${LLRENDER_LIBRARIES}
+    ${TRACY_LIBRARIES}
     ${LLWINDOW_LIBRARIES}
     ${LLIMAGE_LIBRARIES}
     ${LLINVENTORY_LIBRARIES}

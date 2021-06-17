@@ -26,6 +26,7 @@ include_directories(
     ${LLVFS_INCLUDE_DIRS}
     ${LLWINDOW_INCLUDE_DIRS}
     ${LLXML_INCLUDE_DIRS}
+    ${TRACY_INCLUDE_DIRS}
     )
 
 set(llappearance_SOURCE_FILES
@@ -90,6 +91,7 @@ target_link_libraries(llappearance
     ${LLMESSAGE_LIBRARIES}
     ${LLCOREHTTP_LIBRARIES}
     ${LLCOMMON_LIBRARIES}
+    ${TRACY_LIBRARIES}
     )
 
 if (BUILD_HEADLESS)

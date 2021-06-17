@@ -1529,6 +1529,7 @@ bool LLAppViewer::doFrame()
 				gGLActive = TRUE;
 
 				display();
+                FrameMark;  // Frame delimeter for Tracy
 
 				static U64 last_call = 0;
 				if (!gTeleportDisplay)

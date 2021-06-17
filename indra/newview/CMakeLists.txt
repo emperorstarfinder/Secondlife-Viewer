@@ -49,6 +49,7 @@ include(OpenGL)
 include(OpenSSL)
 include(PNG)
 include(TemplateCheck)
+include(Tracy)
 include(UI)
 include(UnixInstall)
 include(ViewerMiscLibs)
@@ -83,6 +84,7 @@ include_directories(
     ${LLPLUGIN_INCLUDE_DIRS}
     ${LLPRIMITIVE_INCLUDE_DIRS}
     ${LLRENDER_INCLUDE_DIRS}
+    ${TRACY_INCLUDE_DIRS}
     ${LLUI_INCLUDE_DIRS}
     ${LLVFS_INCLUDE_DIRS}
     ${LLWINDOW_INCLUDE_DIRS}
@@ -1486,6 +1488,16 @@ if (WINDOWS)
          llwindebug.h
          )
 
+    # tracy profiling library
+    # list(APPEND viewer_SOURCE_FILES
+         # TracyClient.cpp
+         # )
+    # list(APPEND viewer_HEADER_FILES
+         # tracy/Tracy.hpp
+         # tracy/TracyOpenGL.hpp
+         # )
+
+
     # precompiled header configuration
     # llviewerprecompiledheaders.cpp generates
     # the .pch file.
@@ -2031,6 +2043,7 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${LLPLUGIN_LIBRARIES}
     ${LLPRIMITIVE_LIBRARIES}
     ${LLRENDER_LIBRARIES}
+    ${TRACY_LIBRARIES}
     ${FREETYPE_LIBRARIES}
     ${LLUI_LIBRARIES}
     ${LLVFS_LIBRARIES}

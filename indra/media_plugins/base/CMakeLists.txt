@@ -19,6 +19,7 @@ include_directories(
     ${LLMATH_INCLUDE_DIRS}
     ${LLIMAGE_INCLUDE_DIRS}
     ${LLRENDER_INCLUDE_DIRS}
+    ${TRACY_INCLUDE_DIRS}
     ${LLWINDOW_INCLUDE_DIRS}
 )
 include_directories(SYSTEM

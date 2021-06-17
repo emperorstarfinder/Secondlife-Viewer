@@ -49,6 +49,10 @@
 #include "lltimer.h"
 #include "llappcorehttp.h"
 
+#define TRACY_ENABLE    1 
+#define TRACY_ONLY_IPV4 1
+#include "Tracy.hpp"
+
 class LLCommandLineParser;
 class LLFrameTimer;
 class LLPumpIO;
