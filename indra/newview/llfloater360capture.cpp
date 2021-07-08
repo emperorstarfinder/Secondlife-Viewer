@@ -561,6 +561,9 @@ const std::string LLFloater360Capture::build_xmp_block(std::string region_name,
 	// stitching software is the viewer
 	xml_block << "<GPano:StitchingSoftware>" << xmp_toolkit.str() << "</GPano:StitchingSoftware>";
 
+	// record the size of the original cube map image (not really required but useful for debugging quality)
+	xml_block << "<GPano:SourceCubeMapSizePixels>" << mSourceImageSize << "</GPano:SourceCubeMapSizePixels>";
+
 	// how big the image is and which direction to start looking
 	xml_block << "<GPano:InitialViewHeadingDegrees>" << initial_heading << "</GPano:InitialViewHeadingDegrees>";
 	xml_block << "<GPano:FullPanoWidthPixels>" << img_width << "</GPano:FullPanoWidthPixels>";
@@ -580,7 +583,7 @@ const std::string LLFloater360Capture::build_xmp_block(std::string region_name,
 
 	// we already changed the format from zip to jpeg so it seems useful to add a version
 	// number in case we have to branch based on granular features
-	const std::string pano_version("2.0.0");
+	const std::string pano_version("2.1.0");
 	xml_block << "<SLPanoVersion>" << pano_version << "</SLPanoVersion>";
 
 	xml_block << xml_footer1;
